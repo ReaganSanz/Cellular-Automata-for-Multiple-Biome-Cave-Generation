@@ -11,7 +11,8 @@ To clean
 
 
 ## TO DO ##
-- Make simple caves with ASCII images/art
+- ~~Make simple caves with ASCII images/art~~
 - Add more complex colors/features with pixel art
-- Implement different parameters for different biomes
+- ~~Implement different parameters for different biomes~~
 - (OPTIONAL) Add enemy spawns
+- (OPTIONAL) Add unique generated rooms
