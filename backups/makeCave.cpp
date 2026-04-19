@@ -14,15 +14,15 @@
 
 using namespace std;
 
-const int MAP_WIDTH = 65;
-const int MAP_HEIGHT = 100;
+const int MAP_WIDTH = 100;
+const int MAP_HEIGHT = 65;
 
 int ALIVE = 1;
 int DEAD = 0;
 int the_map[MAP_HEIGHT][MAP_WIDTH];
 
 // Change as needed
-const string OUTPUT_FILE_NAME = "./output/cave.png";
+const string OUTPUT_FILE_NAME = "./output/cave.txt";
 const int ITERATIONS = 5;
 
 
@@ -41,29 +41,25 @@ void generateCave(int aliveProbability){
 }
 
 /* showCave: saves the generated cave */
-void showCave(const Biome& cur_biome){
-    unsigned char image[MAP_HEIGHT * MAP_WIDTH * 3]; // RGB channels = 3
-
-    for(int y = 0; y < MAP_HEIGHT; y++){
-        for(int x = 0; x < MAP_WIDTH; x++){
-            int index = (y * MAP_WIDTH + x) * 3;
-            // If alive, set to walls
-            if(the_map[y][x] == ALIVE){
-                image[index] = cur_biome.wallColor.r;     // R
-                image[index + 1] = cur_biome.wallColor.g; // G
-                image[index + 2] = cur_biome.wallColor.b; // B
+void showCave(){
+    ofstream caveFile(OUTPUT_FILE_NAME);
+    if(caveFile.is_open()){
+        for(int y = 0; y < MAP_HEIGHT; y++){
+            for(int x = 0; x < MAP_WIDTH; x++){
+                if(the_map[y][x] == ALIVE){
+                    caveFile << "#"; // Represents a wall
+                } else {
+                    caveFile << "."; // Represents open space of the cave
+                }
             }
-            // If dead, set to open space 
-            else {
-                image[index] = cur_biome.floorColor.r;     // R
-                image[index + 1] = cur_biome.floorColor.g; // G
-                image[index + 2] = cur_biome.floorColor.b; // B 
-            }
+            caveFile << endl;
         }
+        caveFile.close();
+        cout << "Cave saved to " << OUTPUT_FILE_NAME << endl;
+    } 
+    else {
+        cout << "Unable to open file to write cave." << endl;
     }
-    // Write with stbi_write_png
-    stbi_write_png(OUTPUT_FILE_NAME.c_str(), MAP_WIDTH, MAP_HEIGHT, 3, image, MAP_WIDTH * 3);
-    cout << "Cave saved to " << OUTPUT_FILE_NAME << endl;
 
 }
 
@@ -143,9 +139,11 @@ int main(){
     
 
     // Save the generated cave to a file
-    showCave(selectedBiome);
+    showCave();
     return 0;
 }
+
+
 
 
 /*
