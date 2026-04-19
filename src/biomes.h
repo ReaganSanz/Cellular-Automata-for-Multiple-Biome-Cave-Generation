@@ -22,10 +22,10 @@ struct Biome {
     Color wallColor;
     Color floorColor;
     // Chances of spawning different features
-    int water;
-    int treasure;
-    int lava;
-    int monster;
+    double water;
+    double ore;
+    double lava;
+    double monster;
 
 };
 

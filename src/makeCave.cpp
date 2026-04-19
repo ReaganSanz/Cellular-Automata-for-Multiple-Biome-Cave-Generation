@@ -19,11 +19,13 @@ const int MAP_HEIGHT = 100;
 
 int ALIVE = 1;
 int DEAD = 0;
+int ENEMY = 2;
 int the_map[MAP_HEIGHT][MAP_WIDTH];
 
 // Change as needed
 const string OUTPUT_FILE_NAME = "./output/cave.png";
 const int ITERATIONS = 5;
+const int MIN_CAVE_NEIGHBORS_FOR_ENEMY = 5;
 
 
 /* generateCave: generates a cave based on biome probabilities*/
@@ -53,11 +55,17 @@ void showCave(const Biome& cur_biome){
                 image[index + 1] = cur_biome.wallColor.g; // G
                 image[index + 2] = cur_biome.wallColor.b; // B
             }
-            // If dead, set to open space 
-            else {
+            // If dead, set to open cave space 
+            else{
                 image[index] = cur_biome.floorColor.r;     // R
                 image[index + 1] = cur_biome.floorColor.g; // G
                 image[index + 2] = cur_biome.floorColor.b; // B 
+            }
+            // If enemy, set to red
+            if(the_map[y][x] == ENEMY){
+                image[index] = 255;     // R
+                image[index + 1] = 0;   // G
+                image[index + 2] = 0;   // B 
             }
         }
     }
@@ -84,6 +92,28 @@ int neighborCalc(int x, int y){
         }
     }
     return numNeighbors;
+}
+
+/* spawnEnemies: spawns enemies in the cave based on biome parameters */
+void spawnEnemies(int monsterChance){
+    for(int y = 0; y < MAP_HEIGHT; y++) {
+        for(int x = 0; x < MAP_WIDTH; x++) {
+        
+            // Enemies spawn in cave spots (DEAD)
+            if(the_map[y][x] == DEAD) {
+                int wallNeighbors = neighborCalc(x, y);
+                int caveNeighbors = 8 - wallNeighbors; // Total cave neighbors
+
+                // Enemies spawn in cave spots of at least 5 cave neighbors
+                if(caveNeighbors >= MIN_CAVE_NEIGHBORS_FOR_ENEMY) {
+                    double randValue = rand() % 100; // Random value between 0 and 99
+                    if(randValue < monsterChance) {
+                        the_map[y][x] = ENEMY;
+                    }
+                }
+            }
+        }
+    }
 }
 
 int main(){
@@ -122,12 +152,15 @@ int main(){
         int temp_map[MAP_HEIGHT][MAP_WIDTH];
         for(int y = 0; y < MAP_HEIGHT; y++){
             for(int x = 0; x < MAP_WIDTH; x++){
-                int aliveNeighbors = neighborCalc(x, y);
+                int aliveNeighbors = neighborCalc(x, y); // Get the number of alive neighbors
 
+                // Alive = WALL
                 if(the_map[y][x] == ALIVE) {
                     // If it's alive, it stays alive unless it has too few neighbors
                     temp_map[y][x] = (aliveNeighbors < selectedBiome.aliveNeighborThreshold) ? DEAD : ALIVE;
-                } else {
+                } 
+                // Dead = CAVE
+                else {
                     // If it's dead, it becomes alive if it has enough neighbors
                     temp_map[y][x] = (aliveNeighbors > selectedBiome.aliveNeighborThreshold) ? ALIVE : DEAD;
                 }
@@ -140,6 +173,13 @@ int main(){
             }
         }
     }
+
+    // Spawn enemies based on biome parameters
+    spawnEnemies(selectedBiome.monster); 
+
+    // Spawn ores
+    spawnOres(selectedBiome.ore);
+
     
 
     // Save the generated cave to a file
