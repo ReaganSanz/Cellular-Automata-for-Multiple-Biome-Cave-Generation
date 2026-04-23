@@ -24,8 +24,8 @@ struct Biome {
     // Chances of spawning different features
     int water;
     int ore;
-    int lava;
     int monster;
+    int treasure;
 
 };
 
