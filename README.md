@@ -8,6 +8,21 @@ Desciption: This program simulates cave generation in a 2D video game using cell
 To clean
 > make clean
 
+## Example of Generated Caves ##
+### Forest ###
+![forest_ex](example_output/forest_1.png)
+![forest_ex2](example_output/forest_2.png)
+
+### Desert ###
+![desert_ex](example_output/desert_1.png)
+
+### Underwater ###
+![underwater_ex](example_output/underwater_1.png)
+![underwater_ex2](example_output/underwater_2.png)
+
+### Mountain ###
+![mountain_ex2](example_output/mountain_1.png)
+
 
 
 ## TO DO ##
